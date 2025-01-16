@@ -1,0 +1,9 @@
+const Filter = ({ nameFilter, handleNameFilterChange }) => {
+  return (
+    <div>
+      <input type="text" name="name-filter" value={nameFilter} onChange={handleNameFilterChange} />
+    </div>
+  )
+}
+
+export default Filter
