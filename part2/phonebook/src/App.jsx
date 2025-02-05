@@ -4,58 +4,81 @@ import personsService from './services/persons'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
+import Notification from './components/Notification'
 
 function App() {
   const [people, setPeople] = useState([])
-
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
+  const [notificationSetting, setNotificationSetting] = useState({ message: null, isError: null })
 
-  const fetchPeopleHook = () => {
+  useEffect(() => {
+    personsService.getAll().then(setPeople)
+  }, [])
+
+  const showNotification = (message, isError = false) => {
+    setNotificationSetting({ message, isError })
+    setTimeout(() => {
+      setNotificationSetting({ message: null, isError: null })
+    }, 5000)
+  }
+
+  const resetForm = () => {
+    setNewName('')
+    setNewNumber('')
+  }
+
+  const createPerson = () => {
     personsService
-      .getAll()
+      .create({ name: newName, number: newNumber })
       .then(response => {
-        setPeople(response)
+        setPeople(people.concat(response))
+        showNotification(`${response.name} created`)
+        resetForm()
+      })
+      .catch(error => {
+        showNotification(`Cannot added ${newName} due to server error`, true)
       })
   }
 
-  useEffect(fetchPeopleHook, [])
+  const updatePerson = (existingPerson) => {
+    if (
+      existingPerson.number !== newNumber
+      && window.confirm(`${existingPerson.name} is already added to phonebook, replace the old number with a new one?`)
+    ) {
+      personsService
+        .update(existingPerson.id, { name: newName, number: newNumber })
+        .then(response => {
+          setPeople(people.map(p => p.id === response.id ? response : p))
+          showNotification(`${response.name} updated`)
+          resetForm()
+        })
+        .catch(error => {
+          showNotification(`Cannot updated ${existingPerson.name} due to server error`, true)
+        })
+    }
+  }
 
   const handleAddNewPerson = (event) => {
     event.preventDefault()
     if (newName.trim() === '' || newNumber.trim() === '') {
-      alert('Please input both name and number')
+      showNotification('Please input both name and number', true)
       return
     }
     const existingPerson = people.find(p => p.name === newName)
-    if (existingPerson) {
-      if (
-        existingPerson.number !== newNumber
-        && window.confirm(`${existingPerson.name} is already added to phonebook, replace the old number with a new one?`)
-      ) {
-        personsService
-          .update(existingPerson.id, { name: newName, number: newNumber })
-          .then(response => {
-            setPeople(people.map(p => p.id === response.id ? response : p))
-          })
-      }
-    } else {
-      personsService
-        .create({ name: newName, number: newNumber })
-        .then(response => {
-          setPeople(people.concat(response))
-        })
-      setNewName('')
-      setNewNumber('')
-    }
+    existingPerson ? updatePerson(existingPerson) : createPerson()
   }
 
   const handleDeletePerson = (deletedPerson) => {
     if (window.confirm(`Delete ${deletedPerson.name}?`)) {
       personsService.remove(deletedPerson.id)
-        .then(response => {
-          setPeople(people.filter(person => person.id !== response.id))
+        .then(() => {
+          setPeople(people.filter(person => person.id !== deletedPerson.id))
+          showNotification(`${deletedPerson.name} deleted`)
+        })
+        .catch(error => {
+          showNotification(`${deletedPerson.name} has already been removed from server`, true)
         })
     }
   }
@@ -78,9 +101,10 @@ function App() {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <Notification {...notificationSetting} />
       <Filter nameFilter={nameFilter} handleNameFilterChange={handleNameFilterChange} />
-      <h2>Add new contact</h2>
+      <h2>Add a new contact</h2>
       <PersonForm
         newName={newName}
         newNumber={newNumber}
@@ -98,3 +122,4 @@ function App() {
 }
 
 export default App
+
