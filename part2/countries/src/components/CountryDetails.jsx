@@ -1,6 +1,6 @@
-const CountryDetails = ({ country }) => {
+const CountryDetails = ({ country, handleShowShortList = null, canBackToShortList = false }) => {
   const langguageKeys = Object.keys(country.languages)
-  return(
+  return (
     <div>
       <h1>{country.name.common}</h1>
       <h3>Capital: {country.capital}</h3>
@@ -12,6 +12,7 @@ const CountryDetails = ({ country }) => {
         ))}
       </ul>
       <img src={country.flags.png} alt={`${country.name.common} flag`} height="100" />
+      {canBackToShortList && <button onClick={handleShowShortList}>Back to short list</button>}
     </div>
   )
 }

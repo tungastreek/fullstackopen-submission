@@ -7,9 +7,18 @@ import CountryList from "./components/CountryList"
 const App = () => {
   const [countries, setCountries] = useState([])
   const [filterText, setFilterText] = useState('')
+  const [selectedCountry, setSelectedCountry] = useState(null)
 
   const handleFilterTextChange = (event) => {
     setFilterText(event.target.value)
+  }
+
+  const handleShowCountry = (country) => {
+    setSelectedCountry(country)
+  }
+
+  const handleShowShortList = () => {
+    setSelectedCountry(null)
   }
 
   useEffect(() => {
@@ -22,8 +31,6 @@ const App = () => {
     return country.name.official.toLowerCase().includes(filterText.toLowerCase())
   })
 
-  console.log(matchedCountries)
-
   return (
     <>
       <Filter
@@ -31,7 +38,12 @@ const App = () => {
         filterText={filterText}
         handleFilterTextChange={handleFilterTextChange}
       />
-      <CountryList countries={matchedCountries} />
+      <CountryList
+        countries={matchedCountries}
+        selectedCountry={selectedCountry}
+        handleShowCountry={handleShowCountry}
+        handleShowShortList={handleShowShortList}
+      />
     </>
   )
 }
