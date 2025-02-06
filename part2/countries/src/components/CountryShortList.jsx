@@ -11,7 +11,7 @@ const CountryShortList = ({
       <>
         {countries.map((country) => (
           <div key={country.cca3}>
-            <p >{country.name.official}</p>
+            <p>{country.name.official}</p>
             <button onClick={() => handleShowCountry(country)}>Show</button>
           </div>
         ))}
