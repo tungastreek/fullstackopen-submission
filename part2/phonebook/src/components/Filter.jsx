@@ -4,7 +4,7 @@ const Filter = ({ nameFilter, handleNameFilterChange }) => {
       <label htmlFor="name-filter">Filter shown with</label>
       <input type="text" name="name-filter" value={nameFilter} onChange={handleNameFilterChange} />
     </div>
-  )
-}
+  );
+};
 
-export default Filter
+export default Filter;

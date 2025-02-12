@@ -5,7 +5,7 @@ const PersonForm = (props) => {
     handleNewNameChange,
     handleNewNumberChange,
     handleAddNewPerson
-  } = props
+  } = props;
 
   return (
     <form onSubmit={handleAddNewPerson}>
@@ -19,7 +19,7 @@ const PersonForm = (props) => {
       </div>
       <button type="submit">Add</button>
     </form>
-  )
-}
+  );
+};
 
-export default PersonForm
+export default PersonForm;

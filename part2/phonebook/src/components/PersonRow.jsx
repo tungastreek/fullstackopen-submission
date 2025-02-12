@@ -3,7 +3,7 @@ const PersonRow = ({ person, handleDeletePerson }) => {
     <li>
       {person.name} - {person.number} <button onClick={() => handleDeletePerson(person)}>Delete</button>
     </li>
-  )
-}
+  );
+};
 
-export default PersonRow
+export default PersonRow;

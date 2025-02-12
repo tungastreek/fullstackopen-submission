@@ -1,47 +1,47 @@
-import { useEffect, useState } from 'react'
-import personsService from './services/persons'
+import { useEffect, useState } from 'react';
+import personsService from './services/persons';
 
-import Persons from './components/Persons'
-import PersonForm from './components/PersonForm'
-import Filter from './components/Filter'
-import Notification from './components/Notification'
+import Persons from './components/Persons';
+import PersonForm from './components/PersonForm';
+import Filter from './components/Filter';
+import Notification from './components/Notification';
 
 function App() {
-  const [people, setPeople] = useState([])
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
-  const [nameFilter, setNameFilter] = useState('')
-  const [notificationSetting, setNotificationSetting] = useState({ message: null, isError: false })
+  const [people, setPeople] = useState([]);
+  const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
+  const [nameFilter, setNameFilter] = useState('');
+  const [notificationSetting, setNotificationSetting] = useState({ message: null, isError: false });
 
   useEffect(() => {
-    personsService.getAll().then(setPeople)
-  }, [])
+    personsService.getAll().then(setPeople);
+  }, []);
 
   const showNotification = (message, isError = false) => {
-    setNotificationSetting({ message, isError })
+    setNotificationSetting({ message, isError });
     setTimeout(() => {
-      setNotificationSetting({ message: null, isError: false })
-    }, 5000)
-  }
+      setNotificationSetting({ message: null, isError: false });
+    }, 5000);
+  };
 
   const resetForm = () => {
-    setNewName('')
-    setNewNumber('')
-  }
+    setNewName('');
+    setNewNumber('');
+  };
 
   const createPerson = () => {
     personsService
       .create({ name: newName, number: newNumber })
       .then(response => {
-        setPeople(people.concat(response))
-        showNotification(`${response.name} created`)
-        resetForm()
+        setPeople(people.concat(response));
+        showNotification(`${response.name} created`);
+        resetForm();
       })
       .catch((error) => {
         const errorMsg = error.response.data.error;
-        showNotification(`Cannot added ${newName} due to server error: ${errorMsg}`, true)
-      })
-  }
+        showNotification(`Cannot added ${newName} due to server error: ${errorMsg}`, true);
+      });
+  };
 
   const updatePerson = (existingPerson) => {
     if (
@@ -51,55 +51,55 @@ function App() {
       personsService
         .update(existingPerson.id, { name: newName, number: newNumber })
         .then(response => {
-          setPeople(people.map(p => p.id === response.id ? response : p))
-          showNotification(`${response.name} updated`)
-          resetForm()
+          setPeople(people.map(p => p.id === response.id ? response : p));
+          showNotification(`${response.name} updated`);
+          resetForm();
         })
         .catch((error) => {
           const errorMsg = error.response.data.error;
-          showNotification(`Cannot updated ${existingPerson.name} due to server error: ${errorMsg}`, true)
-        })
+          showNotification(`Cannot updated ${existingPerson.name} due to server error: ${errorMsg}`, true);
+        });
     }
-  }
+  };
 
   const handleAddNewPerson = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     if (newName.trim() === '' || newNumber.trim() === '') {
-      showNotification('Please input both name and number', true)
-      return
+      showNotification('Please input both name and number', true);
+      return;
     }
-    const existingPerson = people.find(p => p.name === newName)
-    existingPerson ? updatePerson(existingPerson) : createPerson()
-  }
+    const existingPerson = people.find(p => p.name === newName);
+    existingPerson ? updatePerson(existingPerson) : createPerson();
+  };
 
   const handleDeletePerson = (deletedPerson) => {
     if (window.confirm(`Delete ${deletedPerson.name}?`)) {
       personsService.remove(deletedPerson.id)
         .then(() => {
-          setPeople(people.filter(person => person.id !== deletedPerson.id))
-          showNotification(`${deletedPerson.name} deleted`)
+          setPeople(people.filter(person => person.id !== deletedPerson.id));
+          showNotification(`${deletedPerson.name} deleted`);
         })
         .catch(() => {
-          showNotification(`${deletedPerson.name} has already been removed from server`, true)
-        })
+          showNotification(`${deletedPerson.name} has already been removed from server`, true);
+        });
     }
-  }
+  };
 
   const handleNewNameChange = (event) => {
-    setNewName(event.target.value)
-  }
+    setNewName(event.target.value);
+  };
 
   const handleNewNumberChange = (event) => {
-    setNewNumber(event.target.value)
-  }
+    setNewNumber(event.target.value);
+  };
 
   const handleNameFilterChange = (event) => {
-    setNameFilter(event.target.value)
-  }
+    setNameFilter(event.target.value);
+  };
 
   const filteredPeople = nameFilter.trim() === ''
     ? people
-    : people.filter(person => person.name.toLowerCase().includes(nameFilter.trim().toLowerCase()))
+    : people.filter(person => person.name.toLowerCase().includes(nameFilter.trim().toLowerCase()));
 
   return (
     <div>
@@ -120,8 +120,8 @@ function App() {
         handleDeletePerson={handleDeletePerson}
       />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
 
