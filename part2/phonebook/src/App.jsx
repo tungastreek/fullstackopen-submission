@@ -37,8 +37,9 @@ function App() {
         showNotification(`${response.name} created`)
         resetForm()
       })
-      .catch(() => {
-        showNotification(`Cannot added ${newName} due to server error`, true)
+      .catch((error) => {
+        const errorMsg = error.response.data.error;
+        showNotification(`Cannot added ${newName} due to server error: ${errorMsg}`, true)
       })
   }
 
@@ -54,8 +55,9 @@ function App() {
           showNotification(`${response.name} updated`)
           resetForm()
         })
-        .catch(() => {
-          showNotification(`Cannot updated ${existingPerson.name} due to server error`, true)
+        .catch((error) => {
+          const errorMsg = error.response.data.error;
+          showNotification(`Cannot updated ${existingPerson.name} due to server error: ${errorMsg}`, true)
         })
     }
   }
