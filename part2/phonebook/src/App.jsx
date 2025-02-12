@@ -11,7 +11,7 @@ function App() {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
-  const [notificationSetting, setNotificationSetting] = useState({ message: null, isError: null })
+  const [notificationSetting, setNotificationSetting] = useState({ message: null, isError: false })
 
   useEffect(() => {
     personsService.getAll().then(setPeople)
@@ -20,7 +20,7 @@ function App() {
   const showNotification = (message, isError = false) => {
     setNotificationSetting({ message, isError })
     setTimeout(() => {
-      setNotificationSetting({ message: null, isError: null })
+      setNotificationSetting({ message: null, isError: false })
     }, 5000)
   }
 
@@ -37,7 +37,7 @@ function App() {
         showNotification(`${response.name} created`)
         resetForm()
       })
-      .catch(error => {
+      .catch(() => {
         showNotification(`Cannot added ${newName} due to server error`, true)
       })
   }
@@ -54,7 +54,7 @@ function App() {
           showNotification(`${response.name} updated`)
           resetForm()
         })
-        .catch(error => {
+        .catch(() => {
           showNotification(`Cannot updated ${existingPerson.name} due to server error`, true)
         })
     }
@@ -77,7 +77,7 @@ function App() {
           setPeople(people.filter(person => person.id !== deletedPerson.id))
           showNotification(`${deletedPerson.name} deleted`)
         })
-        .catch(error => {
+        .catch(() => {
           showNotification(`${deletedPerson.name} has already been removed from server`, true)
         })
     }
